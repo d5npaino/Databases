@@ -55,5 +55,28 @@ GROUP BY Genre
 ORDER BY Sales DESC
 LIMIT 10;
 
+/*
+============================================================================
+Task 3: Complete the query for vTopAlbumEachGenre
+DO NOT REMOVE THE STATEMENT "CREATE VIEW vTopAlbumEachGenre AS"
+============================================================================
+*/
+CREATE VIEW vTopAlbumEachGenre AS
+SELECT Genres.Name AS Genre, Albums.Title AS Album, Artists.Name AS Artist, COUNT(*) AS Sales
+FROM Tracks
+JOIN Albums ON Tracks.AlbumId = Albums.AlbumId
+JOIN Artists ON Albums.ArtistId = Artists.ArtistId
+JOIN Genres ON Tracks.GenreId = Genres.GenreId
+WHERE (Genres.GenreId, Albums.AlbumId) IN (
+    SELECT Tracks.GenreId, Tracks.AlbumId
+    FROM Tracks
+    JOIN Invoice_Items ON Tracks.TrackId = Invoice_Items.TrackId
+    GROUP BY Tracks.GenreId, Tracks.AlbumId
+    ORDER BY COUNT(*) DESC
+)
+GROUP BY Genres.Name;
+
+SELECT Genre, Album, Artist, Sales FROM vTopAlbumEachGenre;
+
 
 
