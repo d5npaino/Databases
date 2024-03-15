@@ -43,7 +43,7 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW v10MostSoldMusicGenres AS"
 ============================================================================
 */
  CREATE VIEW v10MostSoldMusicGenres AS
- SELECT Invoice_Items.InvoiceID, Invoice_Items.TrackID, Genres.Name AS Genre, Tracks.GenreID 
+ SELECT Invoice_Items.InvoiceID, Invoice_Items.TrackID, Genres.Name AS Genre, Tracks.GenreID, COUNT(*) As Sales 
 FROM Invoice_Items
 LEFT OUTER JOIN Tracks
 ON Tracks.TrackID = Invoice_Items.TrackID
@@ -53,7 +53,7 @@ GROUP BY Genre
 ORDER BY Sales DESC
 LIMIT 10;
 
-SELECT Genre, COUNT(*) As Sales FROM v10MostSoldMusicGenres;
+SELECT Genre, Sales FROM v10MostSoldMusicGenres;
 
 
 /*
