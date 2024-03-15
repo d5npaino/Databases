@@ -28,7 +28,7 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW vNoCustomerEmployee AS"
 CREATE VIEW vNoCustomerEmployee AS
 SELECT EmployeeId, FirstName, LastName, Title
 FROM Employees
-WHERE EmployeeId NOT IN (
+WHERE EmployeeId IN (
     SELECT DISTINCT EmployeeId
     FROM Invoices
     WHERE EmployeeId IS NOT NULL
@@ -78,5 +78,49 @@ GROUP BY Genres.Name;
 
 SELECT Genre, Album, Artist, Sales FROM vTopAlbumEachGenre;
 
+/*
+============================================================================
+Task 4: Complete the query for v20TopSellingArtists
+DO NOT REMOVE THE STATEMENT "CREATE VIEW v20TopSellingArtists AS"
+============================================================================
+*/
 
+ CREATE VIEW v20TopSellingArtists AS
+SELECT Artists.Name AS Artist, COUNT(DISTINCT Albums.AlbumId) AS TotalAlbum, SUM(Invoice_Items.Quantity) AS TrackSold
+FROM Invoice_Items
+JOIN Tracks ON Invoice_Items.TrackId = Tracks.TrackId
+JOIN Albums ON Tracks.AlbumId = Albums.AlbumId
+JOIN Artists ON Albums.ArtistId = Artists.ArtistId
+GROUP BY Artists.ArtistId;
 
+SELECT Artist, TotalAlbum, TrackSold FROM v20TopSellingArtists
+ORDER BY TrackSold DESC
+LIMIT 20;
+
+/*
+============================================================================
+Task 5: Complete the query for vTopCustomerEachGenre
+DO NOT REMOVE THE STATEMENT "CREATE VIEW vTopCustomerEachGenre AS" 
+============================================================================
+*/
+
+CREATE VIEW vTopCustomerEachGenre AS
+SELECT Genres.Name AS Genre, Customers.FirstName || ' ' || Customers.LastName AS TopSpender, ROUND(SUM(Invoice_Items.Quantity * Invoice_Items.UnitPrice), 2) AS TotalSpending
+FROM Invoice_Items
+JOIN Tracks ON Invoice_Items.TrackId = Tracks.TrackId
+JOIN Genres ON Tracks.GenreId = Genres.GenreId
+JOIN Invoices ON Invoice_Items.InvoiceId = Invoices.InvoiceId
+JOIN Customers ON Invoices.CustomerId = Customers.CustomerId
+WHERE (Genres.GenreId, Customers.CustomerId, Invoice_Items.Quantity * Invoice_Items.UnitPrice) IN (
+    SELECT Tracks.GenreId, Invoices.CustomerId, MAX(Invoice_Items.Quantity * Invoice_Items.UnitPrice)
+    FROM Invoice_Items
+    JOIN Tracks ON Invoice_Items.TrackId = Tracks.TrackId
+    JOIN Genres ON Tracks.GenreId = Genres.GenreId
+    JOIN Invoices ON Invoice_Items.InvoiceId = Invoices.InvoiceId
+    JOIN Customers ON Invoices.CustomerId = Customers.CustomerId
+    GROUP BY Tracks.GenreId, Invoices.CustomerId
+)
+GROUP BY Genres.GenreId;
+
+SELECT Genre, TopSpender, TotalSpending FROM vTopCustomerEachGenre
+ORDER BY Genre ASC;
