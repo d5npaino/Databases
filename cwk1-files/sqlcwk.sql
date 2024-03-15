@@ -48,12 +48,13 @@ FROM Invoice_Items
 LEFT OUTER JOIN Tracks
 ON Tracks.TrackID = Invoice_Items.TrackID
 LEFT OUTER JOIN Genres
-ON Genres.GenreID = Tracks.GenreID;
-
-SELECT Genre, COUNT(*) As Sales FROM v10MostSoldMusicGenres
+ON Genres.GenreID = Tracks.GenreID
 GROUP BY Genre
 ORDER BY Sales DESC
 LIMIT 10;
+
+SELECT Genre, COUNT(*) As Sales FROM v10MostSoldMusicGenres;
+
 
 /*
 ============================================================================
@@ -91,11 +92,12 @@ FROM Invoice_Items
 JOIN Tracks ON Invoice_Items.TrackId = Tracks.TrackId
 JOIN Albums ON Tracks.AlbumId = Albums.AlbumId
 JOIN Artists ON Albums.ArtistId = Artists.ArtistId
-GROUP BY Artists.ArtistId;
-
-SELECT Artist, TotalAlbum, TrackSold FROM v20TopSellingArtists
+GROUP BY Artists.ArtistId
 ORDER BY TrackSold DESC
 LIMIT 20;
+
+SELECT Artist, TotalAlbum, TrackSold FROM v20TopSellingArtists;
+
 
 /*
 ============================================================================
@@ -120,7 +122,8 @@ WHERE (Genres.GenreId, Customers.CustomerId, Invoice_Items.Quantity * Invoice_It
     JOIN Customers ON Invoices.CustomerId = Customers.CustomerId
     GROUP BY Tracks.GenreId, Invoices.CustomerId
 )
-GROUP BY Genres.GenreId;
-
-SELECT Genre, TopSpender, TotalSpending FROM vTopCustomerEachGenre
+GROUP BY Genres.GenreId
 ORDER BY Genre ASC;
+
+SELECT Genre, TopSpender, TotalSpending FROM vTopCustomerEachGenre;
+
